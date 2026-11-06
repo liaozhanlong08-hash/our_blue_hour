@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#eaf2f8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>再聊五分钟 · 我们的蓝色小屋</title>
+<style>
+*{box-sizing:border-box}
+:root{--ink:#304d65;--muted:#7890a3;--line:#c9dce9;--wall:#d6e6f1;--sky:#b4deef;--floor:#d4dfe6}
+body{margin:0;background:#edf4f9;color:var(--ink);font:14px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background-image:radial-gradient(#c3d7e688 .8px,transparent .8px);background-size:16px 16px}
+body.night{--wall:#a9c1d6;--sky:#2c4768;--floor:#adbfce}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;touch-action:manipulation}
+button:disabled{opacity:.6;cursor:default}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #8cabc4;outline-offset:3px}
+button{transition:background .2s,transform .2s}
+.wrap{width:min(940px,calc(100% - 32px));margin:auto}
+header{display:flex;justify-content:space-between;align-items:center;padding:25px 0;border-bottom:1px solid var(--line)}
+.brand{font-size:16px;font-weight:600;letter-spacing:2px}
+.brand small{display:block;font-size:9px;font-weight:400;letter-spacing:2px;color:var(--muted)}
+.quiet{border:1px solid var(--line);background:#ffffffa8;padding:7px 12px;border-radius:3px;font-size:12px}
+.quiet:hover{background:#fff}
+.intro{display:flex;justify-content:space-between;align-items:end;padding:30px 0 25px}
+.eyebrow{font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:10px}
+h1{font-family:"Songti SC","STSong",serif;font-size:clamp(28px,4.5vw,43px);font-weight:500;letter-spacing:2px;line-height:1.4;margin:0}
+h1 span{color:#7496b3}
+.intro p{margin:0;color:var(--muted);text-align:right;font-size:12px}
+.frame{padding:9px;background:#fbfdff;border:1px solid #b9cfdf;box-shadow:5px 6px 0 #ccdeeb;border-radius:3px}
+.frame-top,.frame-bottom{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:10px;padding:5px 5px 10px}
+.frame-bottom{padding:10px 5px 3px}
+.stage{position:relative}
+#room{display:block;width:100%;height:auto;background:#deebf4}
+.sun{display:block}.moon{display:none}
+.night .sun{display:none}.night .moon{display:block}
+#a,#b{transition:transform .3s steps(4)}
+#heart{opacity:0;transition:opacity .2s}
+.hugged #a{transform:translateX(10px)}
+.hugged #b{transform:translateX(-10px)}
+.hugged #heart{opacity:1}
+.hot{position:absolute;transform:translate(-50%,-50%);background:#fbfdffe6;border:1px solid #fff;padding:5px 9px;font-size:11px;box-shadow:2px 2px 0 #7592ab44;border-radius:2px;min-height:32px}
+.hot:hover{background:#fff8e8}
+.nav{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:25px 0}
+.nav button{padding:16px;text-align:left;border:1px solid var(--line);background:#f9fcff;border-radius:3px}
+.nav button:hover{transform:translateY(-3px);background:white;box-shadow:3px 4px 0 #d1e1ed}
+.nav small{display:block;font-size:9px;letter-spacing:2px;color:#90a6b8;margin-bottom:7px}
+.nav b{display:block;font-size:14px;font-weight:500}
+.nav span{font-size:11px;color:var(--muted)}
+footer{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:10px;padding:0 0 30px}
+dialog{padding:0;border:1px solid #b3cbdd;border-radius:4px;background:#f9fbfd;color:var(--ink);width:min(620px,calc(100% - 28px));max-height:86vh;max-height:86dvh;box-shadow:8px 9px 0 #304c6522}
+dialog::backdrop{background:#2c435b70;backdrop-filter:blur(3px)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:20px 23px;border-bottom:1px solid var(--line)}
+h2{margin:0;font-family:"Songti SC","STSong",serif;font-weight:500;font-size:25px}
+#close{width:33px;height:33px;border:1px solid var(--line);background:white;font-size:20px}
+#panel{padding:22px;max-height:calc(86dvh - 91px);overflow:auto}
+.hint{font-size:12px;color:var(--muted);line-height:1.8}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choice{border:1px solid var(--line);padding:12px;background:white;border-radius:3px;text-align:left}
+.choice.selected,.chip.selected{background:#e5eff7;border-color:#8faec6}
+.row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:15px 0}
+.chip{padding:6px 12px;border:1px solid var(--line);background:white;border-radius:3px;font-size:12px}
+.primary{background:#789bb8;color:white;border:1px solid #789bb8;border-radius:3px;padding:9px 14px;font-size:12px}
+hr{border:0;border-top:1px dashed var(--line);margin:23px 0}
+input[type=text],textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:3px;background:white;font-size:13px}
+textarea{min-height:115px;resize:vertical}
+.result{font:20px/1.8 "Songti SC","STSong",serif;color:#6386a4;margin-top:15px;overflow-wrap:anywhere}
+.quote{background:#fffaf0;border:1px solid #e2dccd;box-shadow:3px 4px 0 #e7e2d8;padding:35px 22px;text-align:center;margin:19px 0}
+.quote small{font-size:9px;letter-spacing:3px;color:#aaa18c}
+.quote p{font:23px/1.9 "Songti SC","STSong",serif;white-space:pre-line}
+.quote cite{font-size:12px;font-style:normal;color:var(--muted)}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.photo{padding:0;border:0;background:none;width:100%;perspective:700px}
+.photo-inner{display:block;position:relative;aspect-ratio:4/5;transform-style:preserve-3d;transition:transform .5s}
+.photo.flipped .photo-inner{transform:rotateY(180deg)}
+.front,.back{position:absolute;inset:0;display:flex;flex-direction:column;padding:8px;background:#fffdf7;border:1px solid #d9e2e8;box-shadow:2px 3px 0 #d2dfe8;backface-visibility:hidden}
+.front svg{width:100%;flex:1;min-height:0}
+.front small{font-size:10px;padding:9px 0 2px;color:var(--muted)}
+.back{transform:rotateY(180deg);align-items:center;justify-content:center;padding:16px;font:16px/1.9 "Songti SC","STSong",serif;overflow-wrap:anywhere;background:repeating-linear-gradient(#fffdf7,#fffdf7 23px,#e7e3d8 24px)}
+.caption{font-size:10px;color:var(--muted);display:block;margin-top:13px}
+.caption input{font-size:11px;padding:7px;margin-top:4px}
+.add{display:flex;gap:8px;margin-bottom:17px}
+.add input{min-width:0;flex:1}
+.add button{flex-shrink:0}
+ul{list-style:none;padding:0}
+li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+li label{display:flex;align-items:center;gap:10px;min-width:0}
+li span{overflow-wrap:anywhere}
+li input{accent-color:#7f9fb8;width:17px;height:17px;flex-shrink:0}
+li.done span{text-decoration:line-through;color:#9aabb8}
+.remove{border:0;background:none;font-size:20px;color:#93a7b7;width:30px;height:30px;flex-shrink:0}
+.empty{padding:22px;text-align:center;background:#edf4f9;border:1px dashed var(--line);font-size:12px;color:var(--muted)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#35536c;color:white;border:1px solid #6b879e;border-radius:4px;padding:10px 18px;font-size:12px;width:max-content;max-width:calc(100% - 30px);z-index:10;display:none;pointer-events:none}
+#toast.show{display:block}
+@media(max-width:600px){header{padding:18px 0}.intro{padding:24px 0}.intro p{display:none}.nav{grid-template-columns:1fr 1fr;gap:10px}.nav button{padding:13px}.frame{padding:5px}.frame-bottom{flex-direction:column;gap:3px}.hot{font-size:10px;padding:4px 6px}.gallery{grid-template-columns:1fr;gap:24px}.gallery article{display:grid;grid-template-columns:135px 1fr;gap:16px;align-items:center}.caption{margin:0}.quote p{font-size:20px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}.nav button:hover{transform:none}}
+</style>
+</head>
+<body class="night">
+<div class="wrap">
+<header>
+  <div class="brand">再聊五分钟<small>OUR LITTLE BLUE HOUR</small></div>
+  <button class="quiet" id="theme" aria-label="夜晚模式">换成白天</button>
+</header>
+<section class="intro">
+  <div><div class="eyebrow">A SMALL PLACE, JUST FOR US.</div><h1>把日子，<span>过成我们。</span></h1></div>
+  <p>房间不大，刚好放下<br>我们喜欢的一切。</p>
+</section>
+<main>
+<section class="frame">
+<div class="frame-top"><span>没有截止时间的小屋</span><span>ROOM 01 / 慢慢来</span></div>
+<div class="stage">
+<svg id="room" viewBox="0 0 400 240" shape-rendering="crispEdges" role="img" aria-label="蓝色像素小屋，两个示意小人坐在沙发上。">
+<path fill="#b9ccdb" d="M22 226h360v5H22z"/>
+<path fill="#7f9fb8" d="M12 13h376v213H12z"/>
+<path fill="var(--wall)" d="M17 18h366v139H17z"/>
+<path fill="var(--floor)" d="M17 157h366v64H17z"/>
+<path stroke="#95adbf" d="M17 175h366M17 193h366M17 211h366M65 157v18m50 0v18m50 0v18m50-54v18m50 0v18m50 0v18"/>
+<path fill="#8ba9c0" d="M12 10h376v5H12zM17 152h366v5H17z"/>
+<path fill="#e7edf0" d="M154 30h96v76h-96z"/>
+<path fill="var(--sky)" d="M159 35h86v66h-86z"/>
+<g class="moon"><path fill="#f1e4b8" d="M218 43h12v12h-12zM170 44h2v2h-2zM190 52h2v2h-2zM229 76h2v2h-2z"/><path fill="#2c4768" d="M223 40h10v11h-10z"/></g>
+<g class="sun"><path fill="#f1df9e" d="M216 43h14v14h-14z"/><path fill="#edf7fc" d="M166 52h23v5h-23zM172 48h12v5h-12z"/></g>
+<path fill="#7a9eb7" d="M159 88h86v13h-86zM170 82h22v8h-22zM220 84h25v7h-25z"/>
+<path fill="#e7edf0" d="M201 35h3v66h-3zM159 66h86v3h-86zM150 105h104v4H150z"/>
+<path fill="#8dafcb" d="M144 29h10v77h-10zM250 29h10v77h-10z"/>
+<path fill="#c9deed" d="M140 29h5v70h-5zM260 29h5v70h-5z"/>
+<path fill="#6489a6" d="M138 26h130v3H138z"/>
+<path fill="#7898af" d="M31 41h63v67H31z"/>
+<path fill="#d8e4eb" d="M35 45h55v59H35z"/>
+<path fill="#8ba7bb" d="M34 67h57v4H34zM34 87h57v4H34z"/>
+<path fill="#91b1c8" d="M40 49h5v18h-5zM58 47h5v20h-5zM75 73h5v14h-5z"/>
+<path fill="#d9b7b8" d="M47 52h5v15h-5zM66 48h5v19h-5zM42 74h5v13h-5z"/>
+<path fill="#dfd5ba" d="M74 50h6v17h-6zM51 73h6v14h-6zM61 75h5v12h-5z"/>
+<path fill="#d5bbad" d="M46 31h14v10H46z"/>
+<path fill="#79a18d" d="M51 20h4v13h-4zM43 21h10v5H43zM54 16h10v6H54z"/>
+<path fill="#f9f5eb" d="M294 35h26v32h-26zM333 40h26v32h-26zM311 78h26v30h-26z"/>
+<path fill="#87a8c2" d="M298 39h18v19h-18zM337 44h18v19h-18zM315 82h18v17h-18z"/>
+<path fill="#d9d4bd" d="M304 45h6v6h-6zM344 49h5v5h-5zM321 87h6v6h-6z"/>
+<path fill="#dfc5b8" d="M303 32h8v5h-8zM342 37h8v5h-8zM320 75h8v5h-8z"/>
+<path fill="#687f92" d="M279 112h3v53h-3zM271 165h19v3h-19z"/>
+<path fill="#ebd7ac" d="M270 94h21v6h-21zM266 100h29v13h-29z"/>
+<path fill="#d5b98d" d="M264 112h33v3h-33z"/>
+<path fill="#45647f" d="M35 128h67v40H35z"/>
+<path fill="#2f4867" d="M40 133h57v29H40z"/>
+<path fill="#7999b2" d="M44 137h49v19H44z"/>
+<path fill="#d5d9c5" d="M76 141h9v9h-9z"/>
+<path fill="#4b718e" d="M44 151h49v7H44z"/>
+<path fill="#7f9bb2" d="M30 176h78v24H30z"/>
+<path fill="#bdcedb" d="M27 172h84v5H27z"/>
+<path fill="#a4becf" d="M35 181h30v14H35zM72 181h30v14H72z"/>
+<path fill="#607f99" d="M49 186h5v2h-5zM84 186h5v2h-5zM35 200h5v8h-5zM98 200h5v8h-5zM63 168h9v4h-9z"/>
+<path fill="#cbb5bb" d="M124 190h157v34H124z"/>
+<path fill="#efe7dc" d="M129 194h147v25H129z"/>
+<path fill="#daccc6" d="M135 199h135v15H135z"/>
+<path fill="#8aaaca" d="M132 126h142v48H132z"/>
+<path fill="#abc6df" d="M138 130h59v30h-59zM203 130h64v30h-64z"/>
+<path fill="#7799bb" d="M131 160h145v15H131z"/>
+<path fill="#8baaca" d="M127 143h14v33h-14zM267 143h14v33h-14z"/>
+<path fill="#5c7890" d="M138 176h6v7h-6zM264 176h6v7h-6z"/>
+<path fill="#d2b1b5" d="M142 153h23v21h-23z"/>
+<path fill="#e9d1ce" d="M147 153h2v21h-2zM155 153h2v21h-2z"/>
+<g transform="translate(174 124)"><g id="a">
+<path fill="#36485b" d="M3 0h11v3H3zM1 3h15v12H1z"/>
+<path fill="#e5bfa8" d="M3 8h11v11H3zM0 30h3v4H0zM15 30h3v4h-3z"/>
+<path fill="#526a7d" d="M5 12h1v2H5zM11 12h1v2h-1zM3 34h4v8H3zM11 34h4v8h-4z"/>
+<path fill="#577fa7" d="M1 20h16v13H1zM0 22h3v8H0zM15 22h3v8h-3z"/>
+<path fill="#f0eee6" d="M2 41h6v2H2zM11 41h6v2h-6z"/>
+</g></g>
+<g transform="translate(211 124)"><g id="b">
+<path fill="#6d514c" d="M3 0h11v3H3zM0 3h17v22H0z"/>
+<path fill="#e8c5af" d="M3 8h11v11H3zM0 30h3v4H0zM15 30h3v4h-3z"/>
+<path fill="#596979" d="M5 12h1v2H5zM11 12h1v2h-1zM3 34h4v8H3zM11 34h4v8h-4z"/>
+<path fill="#e5edf2" d="M1 20h16v13H1zM0 22h3v8H0zM15 22h3v8h-3z"/>
+<path fill="#f0eee6" d="M2 41h6v2H2zM11 41h6v2h-6z"/>
+</g></g>
+<path id="heart" fill="#d397aa" d="M199 113h5v3h-5zM207 113h5v3h-5zM197 116h17v4h-17zM200 120h11v3h-11zM203 123h5v3h-5z"/>
+<path fill="#c9a798" d="M157 187h90v7h-90z"/>
+<path fill="#a1847b" d="M162 194h5v20h-5zM238 194h5v20h-5z"/>
+<path fill="#e5cbbc" d="M160 183h84v5h-84z"/>
+<path fill="#eff0e8" d="M168 175h9v8h-9zM177 177h3v3h-3zM224 176h9v7h-9zM233 178h3v3h-3zM193 179h18v5h-18z"/>
+<path id="seed" fill="#657785" d="M197 178h2v2h-2zM202 176h2v2h-2zM207 179h2v2h-2z"/>
+<path fill="#c5a997" d="M306 172h65v6h-65z"/>
+<path fill="#a28d80" d="M311 178h5v27h-5zM361 178h5v27h-5z"/>
+<path fill="#e5d2bf" d="M303 169h71v4h-71z"/>
+<path fill="#f3efe3" d="M311 165h10v4h-10zM358 165h10v4h-10zM329 155h22v14h-22z"/>
+<path fill="#7694a9" d="M326 153h28v4h-28z"/>
+<path fill="#ded0a3" d="M332 157h16v4h-16z"/>
+<path fill="#eff0e4" d="M336 143h1v6h-1zM346 140h1v7h-1z"/>
+<path fill="#d4baad" d="M363 137h16v23h-16z"/>
+<path fill="#739c87" d="M369 111h3v28h-3zM357 117h14v7h-14zM372 107h12v7h-12zM371 128h12v6h-12z"/>
+<path fill="#c0aa94" d="M58 211h27v14H58z"/>
+<path fill="#eee6d4" d="M61 205h11v14H61z"/>
+<path fill="#d1e1ec" d="M72 211h10v11H72z"/>
+</svg>
+<button class="hot" style="left:16%;top:28%" data-open="talk" data-poem="yes">读一句诗</button>
+<button class="hot" style="left:83%;top:28%" data-open="photos">拍立得</button>
+<button class="hot" style="left:84%;top:86%" data-open="date">今晚吃什么</button>
+<button class="hot" style="left:18%;top:87%" data-open="weekend">下个周末</button>
+<button class="hot" style="left:51%;top:73%" id="hug">抱一下</button>
+</div>
+<div class="frame-bottom"><span id="scene-note">椰子鸡还热着，再陪你坐一会儿。</span><span>点点房间，也可以从下面开始。</span></div>
+</section>
+<nav class="nav" aria-label="小屋菜单">
+<button data-open="date"><small>01 / A LITTLE DATE</small><b>今晚的约会</b><span>好好吃饭，再看部电影</span></button>
+<button data-open="talk"><small>02 / FIVE MORE MINUTES</small><b>再聊一会儿</b><span>从一句诗，聊到很远</span></button>
+<button data-open="photos"><small>03 / KEEP THIS MOMENT</small><b>我们的小相册</b><span>把普通的一天留下来</span></button>
+<button data-open="weekend"><small>04 / SEE YOU SOON</small><b>下个周末</b><span>还有很多事，想一起做</span></button>
+</nav>
+</main>
+<footer><span>这里不考默契，也不赶时间。<br>v0.1 · 人物和相片均为示意，未使用真实照片。</span><span id="storage">记录仅保存在当前浏览器，不会跨设备同步。</span></footer>
+</div>
+<dialog id="dialog" aria-labelledby="title">
+<div class="modal-head"><h2 id="title"></h2><button id="close" aria-label="关闭菜单">×</button></div>
+<div id="panel"></div>
+</dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+"use strict";
+const $=(q,r=document)=>r.querySelector(q);
+const E=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const foods=["椰子鸡","客家菜","寿司","鹅肝"],snacks=["瓜子","莲子","松子"];
+const questions=[
+"如果把今天剪成电影，你最想保留哪个镜头？",
+"如果明天不用赶车，我们会怎么过这一天？",
+"你小时候想象的幸福，和现在有什么不一样？",
+"最近有没有一件很小的事，让你觉得被认真在意着？",
+"有什么事，你想等到我们老了还一起做？",
+"下一次散步，我们聊旅行，还是聊小时候的自己？"
+];
+const poems=[
+["晚来天欲雪，\n能饮一杯无？","白居易 ·《问刘十九》"],
+["何当共剪西窗烛，\n却话巴山夜雨时。","李商隐 ·《夜雨寄北》"],
+["人间有味是清欢。","苏轼 ·《浣溪沙》"],
+["深林人不知，\n明月来相照。","王维 ·《竹里馆》"]
+];
+const KEY="our_blue_hour.web.v1";
+const defaults=()=>({version:1,night:true,food:"椰子鸡",snack:"瓜子",films:"",notes:[],captions:["一顿饭，也可以是很长的约会。","电影结束以后，还有好多话想说。","没有目的地，身边是你就好。"]});
+let s=defaults(),writable=true;
+try{
+ const raw=localStorage.getItem(KEY);
+ if(raw){
+  const v=JSON.parse(raw);
+  if(!v||v.version!==1)throw Error("无法读取旧记录");
+  s={version:1,night:v.night!==false,food:foods.includes(v.food)?v.food:"椰子鸡",snack:snacks.includes(v.snack)?v.snack:"瓜子",films:typeof v.films==="string"?v.films.slice(0,2400):"",notes:Array.isArray(v.notes)?v.notes.filter(n=>n&&typeof n.text==="string"&&n.text.trim()).slice(0,40).map(n=>({text:n.text.trim().slice(0,120),done:n.done===true})):[],captions:s.captions.map((t,i)=>Array.isArray(v.captions)&&typeof v.captions[i]==="string"?v.captions[i].slice(0,120):t)};
+ }
+}catch(e){writable=false;$("#storage").textContent="本次未保存；浏览器无法保存或旧记录无法读取，旧内容不会被覆盖。"}
+let toastTimer,page="",lastFocus=null,kind="question",qi=0,pi=0,hugTimer;
+function toast(text){
+ const t=$("#toast"),d=$("#dialog");
+ (d.open?d:document.body).append(t);
+ t.textContent=text;t.classList.add("show");
+ clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),3000);
+}
+function save(){
+ if(!writable)return;
+ try{localStorage.setItem(KEY,JSON.stringify(s))}
+ catch(e){writable=false;$("#storage").textContent="当前无法保存，关闭后本次新增内容可能丢失。";toast("本地保存暂不可用，本次仍然可以体验。")}
+}
+function paint(){
+ document.body.classList.toggle("night",s.night);
+ $("#theme").textContent=s.night?"换成白天":"换成夜晚";
+ $("#theme").setAttribute("aria-pressed",String(s.night));
+ $("#scene-note").textContent="晚餐选了"+s.food+"，桌上还有"+s.snack+"。";
+ $("#seed").setAttribute("fill",s.snack==="瓜子"?"#657785":s.snack==="松子"?"#cfb78e":"#e4d5ba");
+}
+$("#theme").onclick=()=>{s.night=!s.night;save();paint();toast(s.night?"灯留着，我们慢慢聊。":"天亮了，也可以一起发会儿呆。")};
+$("#hug").onclick=()=>{
+ if($("#hug").disabled)return;
+ $("#hug").disabled=true;$("#room").classList.add("hugged");toast("有些话，抱一下就懂了。");
+ clearTimeout(hugTimer);hugTimer=setTimeout(()=>{$("#room").classList.remove("hugged");$("#hug").disabled=false},2200);
+};
+function art(i){
+ const start='<svg viewBox="0 0 120 95" shape-rendering="crispEdges" aria-hidden="true">';
+ const drawings=[
+ '<path fill="#c1d9e8" d="M0 0h120v95H0z"/><path fill="#c6aa97" d="M0 61h120v34H0z"/><path fill="#e3cdb9" d="M10 54h100v8H10z"/><path fill="#f1efe4" d="M41 45h38v27H41zM22 51h12v5H22zM88 51h12v5H88z"/><path fill="#718fa7" d="M37 42h46v5H37z"/><path fill="#d8ca98" d="M45 47h30v6H45z"/><path fill="#f4f1e5" d="M51 28h2v9h-2zM67 22h2v13h-2z"/>',
+ '<path fill="#39536e" d="M0 0h120v95H0z"/><path fill="#dbe4e3" d="M15 12h90v47H15z"/><path fill="#86a6bf" d="M20 17h80v37H20z"/><path fill="#e9ddb5" d="M78 23h11v11H78z"/><path fill="#6688a5" d="M27 74h67v21H27z"/><path fill="#3c4a5b" d="M37 60h13v14H37zM68 59h14v17H68z"/><path fill="#e0bca6" d="M39 64h9v9h-9zM70 63h9v9h-9z"/><path fill="#9db9ce" d="M33 75h21v14H33z"/><path fill="#e2e5df" d="M64 75h22v14H64z"/>',
+ '<path fill="#839fb8" d="M0 0h120v95H0z"/><path fill="#e5dcb5" d="M88 13h11v11H88z"/><path fill="#5f859b" d="M0 49h120v46H0z"/><path fill="#b5c6ce" d="M0 69h120v26H0z"/><path fill="#719580" d="M10 30h18v30H10z"/><path fill="#7f897e" d="M17 57h4v18h-4z"/><path fill="#405267" d="M50 48h11v12H50zM72 48h11v14H72zM52 77h4v12h-4zM58 77h4v12h-4zM74 77h4v12h-4zM80 77h4v12h-4z"/><path fill="#e3bfa9" d="M52 53h8v9h-8zM74 53h8v9h-8z"/><path fill="#6086a6" d="M48 63h17v15H48z"/><path fill="#e5e6de" d="M70 63h17v15H70z"/>'
+ ];
+ return start+drawings[i]+"</svg>";
+}
+function render(){
+ const titles={date:"今晚的约会",talk:"再聊一会儿",photos:"我们的小相册",weekend:"下个周末"};
+ $("#title").textContent=titles[page];
+ let html="";
+ if(page==="date"){
+  html='<p class="hint">今天，把哪一道端上桌？</p><div class="grid">'+foods.map(f=>`<button class="choice ${s.food===f?"selected":""}" data-act="food" data-value="${f}" aria-pressed="${s.food===f}">${f}</button>`).join("")+'</div><div class="row"><span class="hint">桌上的小零食</span>'+snacks.map(n=>`<button class="chip ${s.snack===n?"selected":""}" data-act="snack" data-value="${n}" aria-pressed="${s.snack===n}">${n}</button>`).join("")+'</div><button class="quiet" data-act="random-food">选择困难？帮我们挑一道</button><hr><label for="films" class="hint">我们的待看片单 · 每行一部电影，可以随时修改</label><textarea id="films" maxlength="2400" placeholder="写下一部想一起看的电影">'+E(s.films)+'</textarea><div class="row"><button class="primary" data-act="film">今晚就看这一部</button></div><div id="film-result" class="result"></div>';
+ }else if(page==="talk"){
+  const p=poems[pi];
+  html=`<p class="hint">问题只负责开场，答案留在你们的对话里。</p><div class="row"><button class="chip ${kind==="question"?"selected":""}" data-act="kind" data-value="question">一个话题</button><button class="chip ${kind==="poem"?"selected":""}" data-act="kind" data-value="poem">一页诗</button></div><div class="quote"><small>TAKE YOUR TIME</small><p>${E(kind==="question"?questions[qi]:p[0])}</p>${kind==="poem"?`<cite>${E(p[1])}</cite>`:""}</div><button class="primary" data-act="next">换一张，慢慢聊</button><p class="hint">聊不完的，明天继续也没关系。</p>`;
+ }else if(page==="photos"){
+  const names=["晚饭还有余温","电影散场以后","散步不要目的地"];
+  html='<p class="hint">点照片翻面。三张都是场景示意，不是真实照片。</p><div class="gallery">'+s.captions.map((c,i)=>`<article><button class="photo" data-act="flip" aria-label="翻看：${names[i]}" aria-pressed="false"><span class="photo-inner"><span class="front">${art(i)}<small>${names[i]} · 示意</small></span><span class="back" id="back-${i}">${E(c)}</span></span></button><label class="caption">背面的小字<input type="text" maxlength="120" data-caption="${i}" value="${E(c)}"></label></article>`).join("")+"</div>";
+ }else{
+  html='<p class="hint">不用把周末排满，留一点时间一起发呆。</p><form class="add"><input name="wish" type="text" maxlength="120" required aria-label="想一起做的事" placeholder="例如：找一个公园，慢慢散步"><button class="primary">写下来</button></form>'+(s.notes.length?'<ul>'+s.notes.map((n,i)=>`<li class="${n.done?"done":""}"><label><input type="checkbox" data-check="${i}" ${n.done?"checked":""}><span>${E(n.text)}</span></label><button class="remove" data-act="delete" data-index="${i}" aria-label="删除 ${E(n.text)}">×</button></li>`).join("")+"</ul>":'<div class="empty">这里不赶进度。<br>先写下一件，想和对方一起做的小事。</div>')+'<p class="hint">勾选只是记录，不是任务考核。</p>';
+ }
+ $("#panel").innerHTML=html;
+}
+document.addEventListener("click",e=>{
+ const b=e.target.closest("[data-open]");
+ if(!b)return;
+ page=b.dataset.open;
+ if(page==="talk")kind=b.dataset.poem?"poem":"question";
+ lastFocus=document.activeElement;render();
+ if(!$("#dialog").open)$("#dialog").showModal();
+});
+$("#close").onclick=()=>$("#dialog").close();
+$("#dialog").addEventListener("close",()=>{
+ document.body.append($("#toast"));
+ if(lastFocus&&document.contains(lastFocus))lastFocus.focus();
+});
+$("#dialog").addEventListener("click",e=>{
+ if(e.target!==$("#dialog"))return;
+ const r=e.target.getBoundingClientRect();
+ if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();
+});
+const next=(i,n)=>(i+1+Math.floor(Math.random()*(n-1)))%n;
+$("#panel").addEventListener("click",e=>{
+ const b=e.target.closest("button[data-act]");
+ if(!b)return;
+ const a=b.dataset.act,v=b.dataset.value,i=Number(b.dataset.index);
+ if(a==="food"&&foods.includes(v)){s.food=v;save();paint();render();toast("好，今晚吃"+v+"。")}
+ else if(a==="snack"&&snacks.includes(v)){s.snack=v;save();paint();render()}
+ else if(a==="random-food"){s.food=foods[Math.floor(Math.random()*foods.length)];save();paint();render();toast("今晚就吃"+s.food+"吧。")}
+ else if(a==="film"){
+  const list=[...new Set(s.films.split(/\r?\n/).map(x=>x.trim()).filter(Boolean))];
+  if(!list.length){toast("先在片单里写一部电影吧。");return}
+  $("#film-result").textContent="今晚："+list[Math.floor(Math.random()*list.length)];
+ }
+ else if(a==="kind"&&["question","poem"].includes(v)){kind=v;render()}
+ else if(a==="next"){if(kind==="question")qi=next(qi,questions.length);else pi=next(pi,poems.length);render()}
+ else if(a==="flip"){const flipped=b.classList.toggle("flipped");b.setAttribute("aria-pressed",String(flipped))}
+ else if(a==="delete"&&Number.isInteger(i)&&i>=0&&i<s.notes.length){s.notes.splice(i,1);save();render()}
+});
+$("#panel").addEventListener("input",e=>{
+ if(e.target.id==="films"){s.films=e.target.value.slice(0,2400);save()}
+ if(e.target.hasAttribute("data-caption")){
+  const i=Number(e.target.dataset.caption);
+  if(!Number.isInteger(i)||i<0||i>2)return;
+  s.captions[i]=e.target.value.slice(0,120);
+  $("#back-"+i).textContent=s.captions[i];save();
+ }
+});
+$("#panel").addEventListener("change",e=>{
+ if(!e.target.hasAttribute("data-check"))return;
+ const i=Number(e.target.dataset.check);
+ if(!Number.isInteger(i)||!s.notes[i])return;
+ s.notes[i].done=e.target.checked;
+ e.target.closest("li").classList.toggle("done",e.target.checked);save();
+});
+$("#panel").addEventListener("submit",e=>{
+ e.preventDefault();
+ if(page!=="weekend")return;
+ const text=String(new FormData(e.target).get("wish")||"").trim();
+ if(!text){toast("先写几个字吧。");return}
+ if(s.notes.length>=40){toast("先留四十件小事，慢慢来。");return}
+ s.notes.push({text:text.slice(0,120),done:false});save();render();
+ const field=$('input[name="wish"]');if(field)field.focus();
+});
+paint();
+</script>
+</body>
+</html>
